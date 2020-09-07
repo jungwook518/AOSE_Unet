@@ -22,8 +22,9 @@ data_feature/demand_data_get_feature.py 들어가서 58,59 line clean_train, noi
 이것도 본인 취향 차이다.  
 
 ## 1. train 관련  
-```python train_DCUnet_jsdr_demand.py --gpu 0 --snr 0 --opt 3 --exp_day 0907 --num_noise 1 --batch_size 20 --frame_num 128 --learning_rate 0.0001``` 
-학습이 될텐데 train_DCUnet_jsdr_demand.py file안에서 model_save_path, tensorboard_path, train_val_data_path,...본인 입맛대로 설정한다.
+```python train_DCUnet_jsdr_demand.py --gpu 0 --snr 0 --opt 3 --exp_day 0907 --num_noise 1 --batch_size 20 --frame_num 128 --learning_rate 0.0001```  
+학습이 될텐데 train_DCUnet_jsdr_demand.py file안에서 model_save_path, tensorboard_path, train_val_data_path,  
+... 등등 본인 입맛대로 설정한다.
 
 ```single line``` dsasdad
 
