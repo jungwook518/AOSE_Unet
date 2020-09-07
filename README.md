@@ -26,6 +26,10 @@ data_feature/demand_data_get_feature.py 들어가서 58,59 line clean_train, noi
 학습이 될텐데 train_DCUnet_jsdr_demand.py file안에서 model_save_path, tensorboard_path, train_val_data_path,  
 ... 등등 본인 입맛대로 설정한다.
 
+## 2. model 관련  
+학습할 때 필자는 frame_num=128로 설정하였는데 여기서 frame_num이란 STFT 된 audio 신호에 대해 시간축으로 몇개의 sample을 볼 것인지에 대한 말이다.  
+model이 Unet 구조여서 encoder가 진행될때마다 적절한 타이밍에 input data가 2배씩 줄 것이고, decoder가 진행될때마다 마찬가지로 적절한 타이밍에 2배씩 늘 것이다.  
+따라서 frame_num 을 2의 power로 하는 것을 추천한다. 그게 싫다면 model 만드는 부분에서 padding이나 stride 등 알아서 바꿔라.
 ```single line``` dsasdad
 
 ```python
