@@ -1,9 +1,11 @@
 # AOSE_Unet(Audio Only Speech Enhancement using Unet)  
 
-## 0. Prepare
+## 0. Prepare 
+### 1) download
 https://datashare.is.ed.ac.uk/handle/10283/2791  
 위 주소에서 train / test dataset 28spk download 한다.
-#### ㅎㅇ
+### 2) audio data를 STFT 하여 저장한다.  
+이건 본인 취향 차이인데 어자피 모델 학습할 때 STFT 변환할 꺼 그냥 변환한거 저장해서 쓰자.
 
 ```single line``` dsasdad
 
