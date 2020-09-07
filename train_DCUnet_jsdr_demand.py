@@ -11,7 +11,7 @@ import sys
 from fairseq import utils
 from DCUnet_jsdr_demand import *
 from tensorboardX import SummaryWriter
-from data.avlrs2_demand import *
+from dataset.demand_dataset import *
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=str, required=True)
