@@ -9,10 +9,9 @@ import math
 import random
 import sys
 from fairseq import utils
-from DCUnet_psdr_demand import *
+from DCUnet_jsdr_demand import *
 from tensorboardX import SummaryWriter
 from data.avlrs2_demand import *
-from utils_func.make_spec2audio import *
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=str, required=True)
