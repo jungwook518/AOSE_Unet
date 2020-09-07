@@ -59,38 +59,3 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
         return len(self.data_paths)
     
 
-
-
-
-
-if __name__ == '__main__':
-    data_path = "/home/nas/user/jungwook/fairseq/examples/audio_visual_speech_enhancement/Magnitude_subnetwork/demand_train_sort_noise_0db_num1.txt"
-    train_dataset = AV_Lrs2_pickleDataset(data_path)
-    train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=1,shuffle=True,pin_memory = True, num_workers=8)
-    f = open("demand_train_len.txt",'w')
-    for i, (batch_data) in enumerate(train_loader):
-        audio = batch_data["tgt_wav_len"]
-        print(i)
-        data = "%d\n" % audio
-        f.write(data)
-        
-    f.close()
-        
-        
-    
-        
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
