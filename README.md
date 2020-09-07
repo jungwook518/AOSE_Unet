@@ -34,7 +34,13 @@ enhance된 audio 신호를 보고 싶으면 output의 type을 numpy로 바꾼 �
 
 ## 3. data 추가 관련  
 train data를 다운 받으면 아마 0db~20db의 학습데이터가 있을 것이다.  
-약 10K개 있을 텐데 본인이 원하는  
+약 10K개 있을 텐데 본인이 원하는 noise라던지, SNR 비가 있을 텐데 만드는 법을 작성하도록 하겠다.
+일단 Speech Enhance 관련하여 많이 사용하는 noise가 DEMAND noise이다. 필자도 DEMAND noise를 사용하였다.  
+https://zenodo.org/record/1227121#.X1Ytv3kzaUk 여기 들어가면 DEMAND noise를 다운로드 할 수 있다.
+DEMAND noise를 다운받아보면 공원소리, 버스소리, 차소리, 지하철소리 등 다양한 자연환경에서의 noise를 녹음하였다.  
+위에서 처음으로 다운로드한 데이터도 DEMAND data를 합성한 것이다.  
+아무튼 위 데이터를 다운받으면 본인이 원하는 데이터를 처음으로 다운로드한 Clean data에다가 섞어서 만들면 된다. 되게 간단하다.
+
 ```single line``` dsasdad
 
 ```python
