@@ -5,7 +5,6 @@ import torchaudio
 import librosa
 import numpy
 class ComplexConv2d(nn.Module):
-    # https://github.com/litcoderr/ComplexCNN/blob/master/complexcnn/modules.py
     def __init__(self, in_channel, out_channel, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True, **kwargs):
         super().__init__()
 
