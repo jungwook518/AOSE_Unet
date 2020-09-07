@@ -29,7 +29,12 @@ data_feature/demand_data_get_feature.py 들어가서 58,59 line clean_train, noi
 ## 2. model 관련  
 학습할 때 필자는 frame_num=128로 설정하였는데 여기서 frame_num이란 STFT 된 audio 신호에 대해 시간축으로 몇개의 sample을 볼 것인지에 대한 말이다.  
 model이 Unet 구조여서 encoder가 진행될때마다 적절한 타이밍에 input data가 2배씩 줄 것이고, decoder가 진행될때마다 마찬가지로 적절한 타이밍에 2배씩 늘 것이다.  
-따라서 frame_num 을 2의 power로 하는 것을 추천한다. 그게 싫다면 model 만드는 부분에서 padding이나 stride 등 알아서 바꿔라.
+따라서 frame_num 을 2의 power로 하는 것을 추천한다. 그게 싫다면 model 만드는 부분에서 padding이나 stride 등 알아서 바꿔라.  
+enhance된 audio 신호를 보고 싶으면 output의 type을 numpy로 바꾼 후에 librosa써서 audio로 저장하면 된다.
+
+## 3. data 추가 관련  
+train data를 다운 받으면 아마 0db~20db의 학습데이터가 있을 것이다.  
+약 10K개 있을 텐데 본인이 원하는  
 ```single line``` dsasdad
 
 ```python
