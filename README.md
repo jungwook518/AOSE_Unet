@@ -1,6 +1,6 @@
 # AOSE_Unet(Audio Only Speech Enhancement using Unet)  
 
-## 0. Prepare dataset 관련(본인 취향의 Dataset을 만들거면 필자처럼 안해도 됨) 1로 넘어가면 된다.
+## 0. Prepare dataset 관련(본인 취향의 Dataset을 만들거면 필자처럼 안해도 됨)
 ### 1) download
 https://datashare.is.ed.ac.uk/handle/10283/2791  
 위 주소에서 train / test dataset 28spk download 한다.  
