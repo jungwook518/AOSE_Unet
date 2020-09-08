@@ -24,7 +24,8 @@ p225.wav
 ## 1. train 관련  
 ```python train_DCUnet_jsdr_demand.py --gpu 0 --snr 0 --opt 3 --exp_day 0907 --num_noise 1 --batch_size 20 --frame_num 128 --learning_rate 0.0001```  
 학습이 될텐데 train_DCUnet_jsdr_demand.py file안에서 model_save_path, tensorboard_path, train_val_data_path,  
-... 등등 본인 입맛대로 설정한다.
+... 등등 본인 입맛대로 설정한다. 여기서 snr opt exp_day num_noise는 각 데이터들의 주소를 메모장 파일에 분류해서 저장한 것이다.  
+이것도 본인 입맛대로 설정한다.
 
 ## 2. model 관련  
 학습할 때 필자는 frame_num=128로 설정하였는데 여기서 frame_num이란 STFT 된 audio 신호에 대해 시간축으로 몇개의 sample을 볼 것인지에 대한 말이다.  
@@ -40,12 +41,6 @@ https://zenodo.org/record/1227121#.X1Ytv3kzaUk 여기 들어가면 DEMAND noise�
 DEMAND noise를 다운받아보면 공원소리, 버스소리, 차소리, 지하철소리 등 다양한 자연환경에서의 noise를 녹음하였다.  
 위에서 처음으로 다운로드한 데이터도 DEMAND data를 합성한 것이다.  
 아무튼 위 데이터를 다운받으면 본인이 원하는 데이터를 처음으로 다운로드한 Clean data에다가 섞어서 만들면 된다. 되게 간단하다.  
-
-
-```single line``` dsasdad
-
-```python
-def a()
-
-
-```
+```data_augment/data_aug_demand_dataset.py```에서 clean_train에 audio file 주소 저장한 메모장 주소를 넣고, noise 에 DEMAND noise 주소를 적는다.  
+그럼 DEMAND noise 중에 랜덤으로 섞일 것이다. 이건 코드가 간단하니 본인이 원하는대로 수정해서 사용하면 된다.  
+또한 43번 line에서 k값의 low를 2400000으로 설정했는데 이것도 본인이 원하는대로 수정해서 사용하면 된다.
