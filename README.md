@@ -19,8 +19,8 @@ p225.wav
 이건 본인 취향 차이인데 어자피 모델 학습할 때 STFT 변환할 꺼 그냥 변환한거 저장해서 쓰자.  
 
 ### 3) 저장한 feature를 각각 메모장에 이름들을 1)번처럼 저장하자.  
-이것도 본인 취향 차이다.  
-
+```data_txt/train_...txt,test_...txt``` 처럼 pickle로 저장한 파일들을 메모장에 저장한다.  
+이것도 필자 방식이니 본인 취향대로 하면 된다.
 ## 1. train 관련  
 ```python train_DCUnet_jsdr_demand.py --gpu 0 --snr 0 --opt 3 --exp_day 0907 --num_noise 1 --batch_size 20 --frame_num 128 --learning_rate 0.0001```  
 학습이 될텐데 train_DCUnet_jsdr_demand.py file안에서 model_save_path, tensorboard_path, train_val_data_path,  
