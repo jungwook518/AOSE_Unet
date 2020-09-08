@@ -13,7 +13,7 @@ p225.wav
 
 ### 2) audio data를 STFT 하여 저장한다.  
 48khz 데이터들을 16khz로 resampling해준다. 필자는 16khz로 사용했다.
-data_feature/demand_data_get_feature.py 들어가서 58,59 line clean_train, noise_train 에다가 위에서 작성한 메모장 파일 주소 넣는다.  
+```data_feature/demand_data_get_feature.py``` 들어가서 58,59 line clean_train, noise_train 에다가 위에서 작성한 메모장 파일 주소 넣는다.  
 적절하게 noise_train , clean_train, noise_test, clean_test를 각각의 폴더에 pkl file을 저장한다.  
 한번더 말하지만 본인 취향이고 이렇게 안 할 사람은 dataset을 본인 나름대로 짜면 된다.  
 이건 본인 취향 차이인데 어자피 모델 학습할 때 STFT 변환할 꺼 그냥 변환한거 저장해서 쓰자.  
@@ -39,7 +39,8 @@ train data를 다운 받으면 아마 0db~20db의 학습데이터가 있을 것�
 https://zenodo.org/record/1227121#.X1Ytv3kzaUk 여기 들어가면 DEMAND noise를 다운로드 할 수 있다.
 DEMAND noise를 다운받아보면 공원소리, 버스소리, 차소리, 지하철소리 등 다양한 자연환경에서의 noise를 녹음하였다.  
 위에서 처음으로 다운로드한 데이터도 DEMAND data를 합성한 것이다.  
-아무튼 위 데이터를 다운받으면 본인이 원하는 데이터를 처음으로 다운로드한 Clean data에다가 섞어서 만들면 된다. 되게 간단하다.
+아무튼 위 데이터를 다운받으면 본인이 원하는 데이터를 처음으로 다운로드한 Clean data에다가 섞어서 만들면 된다. 되게 간단하다.  
+
 
 ```single line``` dsasdad
 
