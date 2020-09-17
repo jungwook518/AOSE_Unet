@@ -25,11 +25,11 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
 
 
 
-    def __init__(self,noise_pickle_paths,frame_num):
+    def __init__(self,noise_pickle_paths,frame_num,fs):
 
         self.data_paths = np.loadtxt(noise_pickle_paths,str)
         self.frame_num = frame_num
-        
+        self.fs = fs
                 
     def __getitem__(self, index):
         data_item = self.data_paths[index]
@@ -48,8 +48,8 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
         data["audio_data_Imagine"][1] = data["audio_data_Imagine"][1][:,k:k+frame_num]
 
         
-        data["audio_wav"][0] = data["audio_wav"][0][:,k*256:k*256+(frame_num*256)-1]
-        data["audio_wav"][1] = data["audio_wav"][1][:,k*256:k*256+(frame_num*256)-1]
+        data["audio_wav"][0] = data["audio_wav"][0][:,k*256*self.fs:k*256*self.fs+(frame_num*256*self.fs)-1]
+        data["audio_wav"][1] = data["audio_wav"][1][:,k*256*self.fs:k*256*self.fs+(frame_num*256*self.fs)-1]
         
         return data
         
