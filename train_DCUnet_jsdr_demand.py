@@ -17,21 +17,22 @@ def get_args():
     parser.add_argument('--gpu', type=str, required=True)
     parser.add_argument('--exp_day', type=str, required=True)
     parser.add_argument('--snr', type=str, required=True)
-    parser.add_argument('--opt', type=int, required=True)
     parser.add_argument('--batch_size', type=int, required=True)
-    parser.add_argument('--num_noise', type=int, required=True)
     parser.add_argument('--learning_rate', type=float,required=True)
     parser.add_argument('--frame_num', type=int,required=True)
     parser.add_argument('--fs',type=int,requuired=True)
     args = parser.parse_args()
     return args
     
-def complex_demand_audio(complex_ri,window,length,fs=fs):
+def complex_demand_audio(complex_ri,window,length,fs):
     window = window
     length = length
     complex_ri = complex_ri
+    fs=fs
     audio = torchaudio.functional.istft(stft_matrix = complex_ri, n_fft=1024*fs, hop_length=256*fs, win_length=1024*fs, window=window, center=True, pad_mode='reflect', normalized=False, onesided=True, length=length)
-
+    
+    return audio
+    
 if __name__ == '__main__':
 
 
@@ -41,14 +42,6 @@ if __name__ == '__main__':
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     exp_day = args.exp_day
     SNR = args.snr
-    opt = args.opt #clean, gauss, noise
-    if opt == 1:
-        option = 'clean'
-    elif opt == 2:
-        option = 'gaussian_noise'
-    elif opt == 3:
-        option = 'noise'
-    number_of_noisy = args.num_noise
     batch_size = args.batch_size
     learning_rate = args.learning_rate
     frame_num = args.frame_num
@@ -59,15 +52,12 @@ if __name__ == '__main__':
     
     audio_maxlen = frame_num*256*fs-1 
     window=torch.hann_window(window_length=1024*fs, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
-    tensorboard_path = 'runs/DCUnet_sdr_demand/'+str(exp_day)+'/'+str(option)+'/SNR'+str(SNR)+'/number_of_noisy_'+str(number_of_noisy)+'_learning_rate_'+str(learning_rate)+'_batch_'+str(batch_size)+'_frame_num_'+str(frame_num)
-    if not os.path.exists(tensorboard_path):
-        os.makedirs(tensorboard_path)
-    summary = SummaryWriter(tensorboard_path)
+    
     
 
     best_loss = 10
-    data_train="data_txt/demand_train_sort_noise_"+str(SNR)+'db_num'+str(number_of_noisy)+'.txt'
-    data_val="data_txt/demand_test_sort_noise_"+str(SNR)+'db_num'+str(number_of_noisy)+'.txt'
+    data_train="data_txt/demand_train_noise_"+str(SNR)+'db.txt'
+    data_val="data_txt/demand_test_noise_"+str(SNR)+'db.txt'
 
     train_dataset = AV_Lrs2_pickleDataset(data_train,frame_num,fs)
     val_dataset = AV_Lrs2_pickleDataset(data_val,frame_num,fs)
@@ -104,9 +94,9 @@ if __name__ == '__main__':
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'.format(epoch+1, num_epochs, i+1, len(train_loader), loss.item()))
             train_loss+=loss.item()
         train_loss = train_loss/len(train_loader)
-        summary.add_scalar('training loss',train_loss,epoch)
-        
-        modelsave_path = 'model_ckpt/DCUnet_sdr_demand/'+str(exp_day)+'/'+str(option)+'/SNR'+str(SNR)+'/number_of_noisy_'+str(number_of_noisy)+'_learning_rate_'+str(learning_rate)+'_batch_'+str(batch_size)+'_frame_num_'+str(frame_num)
+        print("train_loss")
+        print(train_loss)
+        modelsave_path = 'model_ckpt/DCUnet_jsdr_demand/'+str(exp_day)+'/SNR'+str(SNR)+'/learning_rate_'+str(learning_rate)+'_batch_'+str(batch_size)+'_frame_num_'+str(frame_num)
         if not os.path.exists(modelsave_path):
             os.makedirs(modelsave_path)
         torch.save(model.state_dict(), str(modelsave_path)+'/epoch'+str(epoch)+'model.pth')
@@ -135,8 +125,8 @@ if __name__ == '__main__':
                 print('valEpoch [{}/{}], Step [{}/{}], Loss: {:.4f}'.format(epoch+1, num_epochs, j+1, len(val_loader), loss.item()))
                 val_loss +=loss.item()
             val_loss = val_loss/len(val_loader)
-            summary.add_scalar('val loss',val_loss,epoch)
-            summary.add_scalar('lr',optimizer.state_dict()['param_groups'][0]['lr'],epoch)
+            print("val_loss")
+            print(val_loss)
             scheduler.step(val_loss)
             if best_loss > val_loss:
                 torch.save(model.state_dict(), str(modelsave_path)+'/bestmodel.pth')
