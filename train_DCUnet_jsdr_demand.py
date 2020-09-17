@@ -22,14 +22,15 @@ def get_args():
     parser.add_argument('--num_noise', type=int, required=True)
     parser.add_argument('--learning_rate', type=float,required=True)
     parser.add_argument('--frame_num', type=int,required=True)
+    parser.add_argument('--fs',type=int,requuired=True)
     args = parser.parse_args()
     return args
     
-def complex_demand_audio(complex_ri,window,length):
+def complex_demand_audio(complex_ri,window,length,fs=fs):
     window = window
     length = length
     complex_ri = complex_ri
-    audio = torchaudio.functional.istft(stft_matrix = complex_ri, n_fft=1024, hop_length=256, win_length=1024, window=window, center=True, pad_mode='reflect', normalized=False, onesided=True, length=length)
+    audio = torchaudio.functional.istft(stft_matrix = complex_ri, n_fft=1024*fs, hop_length=256*fs, win_length=1024*fs, window=window, center=True, pad_mode='reflect', normalized=False, onesided=True, length=length)
 
 if __name__ == '__main__':
 
@@ -51,11 +52,13 @@ if __name__ == '__main__':
     batch_size = args.batch_size
     learning_rate = args.learning_rate
     frame_num = args.frame_num
-    
+    fs = args.fs/16 
     start_epoch = 0
     num_epochs = 50
-    audio_maxlen = frame_num*256-1 #train100352 test94208 val99328 8191
-    window=torch.hann_window(window_length=1024, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
+    
+    
+    audio_maxlen = frame_num*256*fs-1 
+    window=torch.hann_window(window_length=1024*fs, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
     tensorboard_path = 'runs/DCUnet_sdr_demand/'+str(exp_day)+'/'+str(option)+'/SNR'+str(SNR)+'/number_of_noisy_'+str(number_of_noisy)+'_learning_rate_'+str(learning_rate)+'_batch_'+str(batch_size)+'_frame_num_'+str(frame_num)
     if not os.path.exists(tensorboard_path):
         os.makedirs(tensorboard_path)
