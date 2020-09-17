@@ -69,8 +69,8 @@ if __name__ == '__main__':
     data_train="data_txt/demand_train_sort_noise_"+str(SNR)+'db_num'+str(number_of_noisy)+'.txt'
     data_val="data_txt/demand_test_sort_noise_"+str(SNR)+'db_num'+str(number_of_noisy)+'.txt'
 
-    train_dataset = AV_Lrs2_pickleDataset(data_train,frame_num)
-    val_dataset = AV_Lrs2_pickleDataset(data_val,frame_num)
+    train_dataset = AV_Lrs2_pickleDataset(data_train,frame_num,fs)
+    val_dataset = AV_Lrs2_pickleDataset(data_val,frame_num,fs)
     
     train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=True)
     val_loader = torch.utils.data.DataLoader(dataset=val_dataset,batch_size=batch_size,shuffle=True,num_workers=8)
