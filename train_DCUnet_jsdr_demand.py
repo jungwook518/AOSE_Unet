@@ -118,7 +118,7 @@ if __name__ == '__main__':
                 enhance_r = enhance_r.unsqueeze(3)
                 enhance_i = enhance_i.unsqueeze(3)
                 enhance_spec = torch.cat((enhance_r,enhance_i),3)
-                audio_me_pe = complex_demand_audio(enhance_spec,window,length=audio_maxlen).to(device)
+                audio_me_pe = complex_demand_audio(enhance_spec,window,length=audio_maxlen,fs).to(device)
                 
                 
                 loss = criterion(input_audio,target_audio,audio_me_pe,eps=1e-8).to(device)
