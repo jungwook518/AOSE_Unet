@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
             
             
-            audiosave_path = "audio_output/DCUnet_sample_test_"+str(exp_day)+'_'+str(SNR)+"db
+            audiosave_path = "audio_output/DCUnet_sample_test_"+str(exp_day)+'_'+str(SNR)+"db"
             if not os.path.exists(audiosave_path):
                 os.makedirs(audiosave_path)
             
