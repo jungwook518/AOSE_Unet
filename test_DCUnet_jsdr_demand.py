@@ -23,6 +23,13 @@ def get_args():
     args = parser.parse_args()
     return args
 
+def tensor2audio(audio,window,length):
+    window = window
+    length = length
+    audio = audio
+    audio = audio.numpy().squeeze()
+    return audio
+    
 def complex_demand_audio(complex_ri,window,length,fs):
     window = window
     length = length
@@ -62,32 +69,26 @@ if __name__ == '__main__':
             
             audio_real = batch_data["audio_data_Real"][0].to(device)
             audio_imagine = batch_data["audio_data_Imagine"][0].to(device)
-            target_audio = batch_data["audio_wav"][1].squeeze(1).to(device)
             audio_maxlen = audio_real.shape[-1]*256*fs-1
             
             enhance_r, enhance_i = model_test(audio_real,audio_imagine)
             enhance_r = enhance_r.unsqueeze(3)
             enhance_i = enhance_i.unsqueeze(3)
             enhance_spec = torch.cat((enhance_r,enhance_i),3)
-            audio_me_pe = complex_demand_audio(enhance_spec,window,length=audio_maxlen)
+            audio_me_pe = complex_demand_audio(enhance_spec,window,length=audio_maxlen,fs)
             
+            data_wav_len = batch_data["data_wav_len"][0]
             
-
             input_audio = batch_data["audio_wav"][0]
-            target_audio = batch_data["audio_wav"][1]
-            
-            tgt_wav_len = batch_data["tgt_wav_len"][0]
             input_audio = tensor2audio(input_audio,window,length=tgt_wav_len)
-            target_audio = tensor2audio(target_audio,window,length=tgt_wav_len)
 
-            
             
             audiosave_path = "audio_output/DCUnet_sample_test_"+str(exp_day)+'_'+str(SNR)+"db"
             if not os.path.exists(audiosave_path):
                 os.makedirs(audiosave_path)
             
-            tgt_wav_len = batch_data["tgt_wav_len"][0]
-            torchaudio.save(audiosave_path+"/enhance_"+str(i)+".wav", src=torch.from_numpy(audio_me_pe[:tgt_wav_len]).unsqueeze(0), sample_rate=16000)
+            
+            torchaudio.save(audiosave_path+"/enhance_"+str(i)+".wav", src=torch.from_numpy(audio_me_pe[:tgt_wav_len]).unsqueeze(0), sample_rate=16000*fs)
 
 
 

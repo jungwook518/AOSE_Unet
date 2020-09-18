@@ -25,20 +25,29 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
 
 
 
-    def __init__(self,noise_pickle_paths):
+    def __init__(self,noise_pickle_paths,fs):
 
         self.data_paths = np.loadtxt(noise_pickle_paths,str)
-        
+        self.fs = fs
         
                 
     def __getitem__(self, index):
-        data_item = self.data_paths[index]
-    
-        with open(data_item, 'rb') as f:
-            data = pickle.load(f)
+        data_item = self.data_paths[index] if self.noi_paths is not None else None
+        
+        win_len = 1024*(fs/16)
+        window=torch.hann_window(window_length=win_len, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False)
+
+        data_wav,_ = torchaudio.load(data_item)
+        
+        data_wav_len = data_wav.shape[1]
+        spec_noi = torchaudio.functional.spectrogram(waveform=data_wav, pad=0, window=window, n_fft=win_len, hop_length=win_len/4, win_length=win_len, power=None, normalized=False)
+        input_wav_real = spec_noi[0,:,:,0]
+        input_wav_imag = spec_noi[0,:,:,1]
+        data = {"id": index,"data_wav_len":data_wav_len, "audio_wav" : [data_wav],"audio_data_Real":[input_wav_real], "audio_data_Imagine":[input_wav_imag]}
+
         
        
-        tgt_wav_len = data["tgt_wav_len"]
+        data_wav_len = data["data_wav_len"]
         time_len = data["audio_data_Real"][0].shape[1]
         if time_len < 512:
             empty_in_r = torch.zeros(513,512)
