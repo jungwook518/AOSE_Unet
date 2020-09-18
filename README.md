@@ -9,7 +9,8 @@ ex)p224.wav
 p225.wav  
 ...
 본인 취향인데 나는 feature를 저장하려고 이렇게 했다.  
-이렇게 해도 되고 안해도 되고 안 할 사람은 dataset을 본인 나름대로 짜면 된다.  
+이렇게 해도 되고 안해도 되고 안 할 사람은 dataset을 본인 나름대로 짜면 된다.
+```dataset/demand_dataset_test.py 참고 ```
 
 ### 2) audio data를 STFT 하여 저장한다.  
 48khz 데이터들을 16khz로 resampling해준다. 필자는 16khz로 사용했다.
@@ -22,7 +23,8 @@ p225.wav
 ```data_txt/train_...txt,test_...txt``` 처럼 pickle로 저장한 파일들을 메모장에 저장한다.  
 이것도 필자 방식이니 본인 취향대로 하면 된다.
 ## 1. train 관련  
-```python train_DCUnet_jsdr_demand.py --gpu 0 --snr 0 --opt 3 --exp_day 0907 --num_noise 1 --batch_size 20 --frame_num 128 --learning_rate 0.0001```  
+```python train_DCUnet_jsdr_demand.py --gpu 0 --snr 0 --exp_day 0907 --batch_size 20 --frame_num 128 --learning_rate 0.0001 --fs 16```
+sampling rate fs를 추가하였고 16,32,48 (3가지중 하나)로 하면 된다.
 학습이 될텐데 train_DCUnet_jsdr_demand.py file안에서 model_save_path, tensorboard_path, train_val_data_path,  
 ... 등등 본인 입맛대로 설정한다. 여기서 snr opt exp_day num_noise는 각 데이터들의 주소를 메모장 파일에 분류해서 저장한 것이다.  
 이것도 본인 입맛대로 설정한다.
@@ -33,7 +35,14 @@ model이 Unet 구조여서 encoder가 진행될때마다 적절한 타이밍에 
 따라서 frame_num 을 2의 power로 하는 것을 추천한다. 그게 싫다면 model 만드는 부분에서 padding이나 stride 등 알아서 바꾸면된다.  
 enhance된 audio 신호를 보고 싶으면 output의 type을 numpy로 바꾼 후에 librosa써서 audio로 저장하면 된다.
 
-## 3. data 추가 관련  
+## 3. test 관련  
+```python test_DCUnet_jsdr_demand.py --exp_day 0918 --snr 0 --fs 48 --test_model model_ckpt/bestmodel.pth```   
+sampling rate fs를 추가하였고 16,32,48 (3가지중 하나)로 하면 된다.
+test할 때 test audio들의 주소를 저장해 놓은 파일을 ```test_DCUnet_jsdr_demand.py``` line 57 data_test에 올려놓는다.  
+test data에 대한 dataset은 train data와 다르게 설정하였고, train과 달리 audio들을 입력받는다. STFT feature를 뽑아놨으면 line 37에서 line 49를 생략하면 된다.  
+그리고 audio의 길이를 line 55에서 time_len < 512(약8.192)로 제한을 하였고 더 긴 길이의 audio를 입력할 거면 수정하면 된다.
+
+## 4. data 추가 관련  
 train data를 다운 받으면 아마 0db~20db의 학습데이터가 있을 것이다.  
 약 10K개 있을 텐데 본인이 원하는 noise라던지, SNR 비가 있을 텐데 만드는 법을 작성하도록 하겠다.
 일단 Speech Enhance 관련하여 많이 사용하는 noise가 DEMAND noise이다. 필자도 DEMAND noise를 사용하였다.  
