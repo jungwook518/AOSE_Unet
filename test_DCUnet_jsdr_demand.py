@@ -18,7 +18,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp_day', type=str, required=True)
     parser.add_argument('--snr', type=str, required=True)
-    parser.add_argument('--fs',type=int,requuired=True)
+    parser.add_argument('--fs',type=int,required=True)
     parser.add_argument('--test_model', type=str,required=True)
     args = parser.parse_args()
     return args
@@ -35,8 +35,8 @@ def complex_demand_audio(complex_ri,window,length,fs):
     length = length
     complex_ri = complex_ri
     fs=fs
-    audio = torchaudio.functional.istft(stft_matrix = complex_ri, n_fft=1024*fs, hop_length=256*fs, win_length=1024*fs, window=window, center=True, pad_mode='reflect', normalized=False, onesided=True, length=length)
-    
+    audio = torchaudio.functional.istft(stft_matrix = complex_ri, n_fft=int(1024*fs), hop_length=int(256*fs), win_length=int(1024*fs), window=window, center=True, pad_mode='reflect', normalized=False, onesided=True, length=length)
+    audio = audio.numpy().squeeze()
     return audio
 
 if __name__ == '__main__':
@@ -49,8 +49,8 @@ if __name__ == '__main__':
     SNR = args.snr
     fs = args.fs/16 #16,32,48
     batch_size = 1
-    
-    window=torch.hann_window(window_length=1024*fs, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
+    win_len = 1024*fs
+    window=torch.hann_window(window_length=int(win_len), periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
     test_model = args.test_model
     num_epochs = 1
 
@@ -69,18 +69,18 @@ if __name__ == '__main__':
             
             audio_real = batch_data["audio_data_Real"][0].to(device)
             audio_imagine = batch_data["audio_data_Imagine"][0].to(device)
-            audio_maxlen = audio_real.shape[-1]*256*fs-1
+            audio_maxlen = int(audio_real.shape[-1]*256*fs-1)
             
             enhance_r, enhance_i = model_test(audio_real,audio_imagine)
             enhance_r = enhance_r.unsqueeze(3)
             enhance_i = enhance_i.unsqueeze(3)
             enhance_spec = torch.cat((enhance_r,enhance_i),3)
-            audio_me_pe = complex_demand_audio(enhance_spec,window,length=audio_maxlen,fs)
+            audio_me_pe = complex_demand_audio(enhance_spec,window,audio_maxlen,fs)
             
             data_wav_len = batch_data["data_wav_len"][0]
             
             input_audio = batch_data["audio_wav"][0]
-            input_audio = tensor2audio(input_audio,window,length=tgt_wav_len)
+            input_audio = tensor2audio(input_audio,window,length=data_wav_len)
 
             
             audiosave_path = "audio_output/DCUnet_sample_test_"+str(exp_day)+'_'+str(SNR)+"db"
@@ -88,7 +88,7 @@ if __name__ == '__main__':
                 os.makedirs(audiosave_path)
             
             
-            torchaudio.save(audiosave_path+"/enhance_"+str(i)+".wav", src=torch.from_numpy(audio_me_pe[:tgt_wav_len]).unsqueeze(0), sample_rate=16000*fs)
+            torchaudio.save(audiosave_path+"/enhance_"+str(i)+".wav", src=torch.from_numpy(audio_me_pe[:data_wav_len]).unsqueeze(0), sample_rate=int(16000*fs))
 
 
 

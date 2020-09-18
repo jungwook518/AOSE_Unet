@@ -29,7 +29,7 @@ def complex_demand_audio(complex_ri,window,length,fs):
     length = length
     complex_ri = complex_ri
     fs=fs
-    audio = torchaudio.functional.istft(stft_matrix = complex_ri, n_fft=1024*fs, hop_length=256*fs, win_length=1024*fs, window=window, center=True, pad_mode='reflect', normalized=False, onesided=True, length=length)
+    audio = torchaudio.functional.istft(stft_matrix = complex_ri, n_fft=int(1024*fs), hop_length=int(256*fs), win_length=int(1024*fs), window=window, center=True, pad_mode='reflect', normalized=False, onesided=True, length=length)
     
     return audio
     
@@ -50,8 +50,8 @@ if __name__ == '__main__':
     num_epochs = 50
     
     
-    audio_maxlen = frame_num*256*fs-1 
-    window=torch.hann_window(window_length=1024*fs, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
+    audio_maxlen = int(frame_num*256*fs-1) 
+    window=torch.hann_window(window_length=int(1024*fs), periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
     
     
 

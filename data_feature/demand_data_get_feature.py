@@ -27,7 +27,7 @@ class AV_Lrs2Dataset_make_feature(FairseqDataset):
         self.fs = fs
     def __getitem__(self, index):
         
-        win_len = 1024*(fs/16)
+        win_len = int(1024*(fs/16))
         window=torch.hann_window(window_length=win_len, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False)
         tgt_item = self.tgt_paths[index] if self.tgt_paths is not None else None
         tgt_wav,_ = torchaudio.load(tgt_item)
@@ -37,8 +37,8 @@ class AV_Lrs2Dataset_make_feature(FairseqDataset):
         
         tgt_wav_len = tgt_wav.shape[1]
         
-        spec_tgt = torchaudio.functional.spectrogram(waveform=tgt_wav, pad=0, window=window, n_fft=win_len, hop_length=win_len/4, win_length=win_len, power=None, normalized=False)
-        spec_noi = torchaudio.functional.spectrogram(waveform=noi_wav, pad=0, window=window, n_fft=win_len, hop_length=win_len/4, win_length=win_len, power=None, normalized=False)
+        spec_tgt = torchaudio.functional.spectrogram(waveform=tgt_wav, pad=0, window=window, n_fft=win_len, hop_length=int(win_len/4), win_length=win_len, power=None, normalized=False)
+        spec_noi = torchaudio.functional.spectrogram(waveform=noi_wav, pad=0, window=window, n_fft=win_len, hop_length=int(win_len/4), win_length=win_len, power=None, normalized=False)
         tgt_wav_real = spec_tgt[0,:,:,0]
         tgt_wav_imag = spec_tgt[0,:,:,1]
         input_wav_real = spec_noi[0,:,:,0]
