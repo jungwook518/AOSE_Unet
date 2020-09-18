@@ -54,7 +54,7 @@ if __name__ == '__main__':
     test_model = args.test_model
     num_epochs = 1
 
-    data_test = "data_txt/sample_test.txt"
+    data_test = "/home/nas/user/jungwook/fairseq/examples/audio_visual_speech_enhancement/Magnitude_subnetwork/sample/sample_data.txt"
     test_dataset = AV_Lrs2_pickleDataset(data_test,fs)
     test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=batch_size, shuffle=False,num_workers=8)
     
