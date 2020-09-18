@@ -20,7 +20,7 @@ def get_args():
     parser.add_argument('--batch_size', type=int, required=True)
     parser.add_argument('--learning_rate', type=float,required=True)
     parser.add_argument('--frame_num', type=int,required=True)
-    parser.add_argument('--fs',type=int,requuired=True)
+    parser.add_argument('--fs',type=int,required=True)
     args = parser.parse_args()
     return args
     
@@ -62,9 +62,9 @@ if __name__ == '__main__':
     train_dataset = AV_Lrs2_pickleDataset(data_train,frame_num,fs)
     val_dataset = AV_Lrs2_pickleDataset(data_val,frame_num,fs)
     
-    train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=True)
+    train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=False)
     val_loader = torch.utils.data.DataLoader(dataset=val_dataset,batch_size=batch_size,shuffle=True,num_workers=8)
-    model = UNet()
+    model = UNet().to(device)
     
     criterion=wSDRLoss
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -84,7 +84,7 @@ if __name__ == '__main__':
             enhance_r = enhance_r.unsqueeze(3)
             enhance_i = enhance_i.unsqueeze(3)
             enhance_spec = torch.cat((enhance_r,enhance_i),3)
-            audio_me_pe = complex_demand_audio(enhance_spec,window,length=audio_maxlen)
+            audio_me_pe = complex_demand_audio(enhance_spec,window,audio_maxlen,fs)
 
             
             loss = criterion(input_audio,target_audio,audio_me_pe,eps=1e-8).to(device)
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         modelsave_path = 'model_ckpt/DCUnet_jsdr_demand/'+str(exp_day)+'/SNR'+str(SNR)+'/learning_rate_'+str(learning_rate)+'_batch_'+str(batch_size)+'_frame_num_'+str(frame_num)
         if not os.path.exists(modelsave_path):
             os.makedirs(modelsave_path)
-        torch.save(model.state_dict(), str(modelsave_path)+'/epoch'+str(epoch)+'model.pth')
+        #torch.save(model.state_dict(), str(modelsave_path)+'/epoch'+str(epoch)+'model.pth')
         torch.save(model.state_dict(), str(modelsave_path)+'/lastmodel.pth')
         model.eval()
         with torch.no_grad():
@@ -118,7 +118,7 @@ if __name__ == '__main__':
                 enhance_r = enhance_r.unsqueeze(3)
                 enhance_i = enhance_i.unsqueeze(3)
                 enhance_spec = torch.cat((enhance_r,enhance_i),3)
-                audio_me_pe = complex_demand_audio(enhance_spec,window,length=audio_maxlen,fs).to(device)
+                audio_me_pe = complex_demand_audio(enhance_spec,window,audio_maxlen,fs).to(device)
                 
                 
                 loss = criterion(input_audio,target_audio,audio_me_pe,eps=1e-8).to(device)
