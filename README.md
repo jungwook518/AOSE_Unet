@@ -26,8 +26,7 @@ p225.wav
 ```python train_DCUnet_jsdr_demand.py --gpu 0 --snr 0 --exp_day 0907 --batch_size 20 --frame_num 128 --learning_rate 0.0001 --fs 16```
 sampling rate fs를 추가하였고 16,32,48 (3가지중 하나)로 하면 된다.
 학습이 될텐데 train_DCUnet_jsdr_demand.py file안에서 model_save_path, tensorboard_path, train_val_data_path,  
-... 등등 본인 입맛대로 설정한다. 여기서 snr opt exp_day num_noise는 각 데이터들의 주소를 메모장 파일에 분류해서 저장한 것이다.  
-이것도 본인 입맛대로 설정한다.
+... 등등 본인 입맛대로 설정한다. 
 
 ## 2. model 관련  
 학습할 때 필자는 frame_num=128로 설정하였는데 여기서 frame_num이란 STFT 된 audio 신호에 대해 시간축으로 몇개의 sample을 볼 것인지에 대한 말이다.  
