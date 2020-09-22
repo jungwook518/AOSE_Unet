@@ -370,8 +370,8 @@ def wSDRLoss(mixed, clean, clean_est, eps=2e-7):
     noise_est = mixed - clean_est
 
     a = bsum(clean**2) / (bsum(clean**2) + bsum(noise**2) + eps)
-    #wSDR = a * mSDRLoss(clean, clean_est) + (1 - a) * mSDRLoss(noise, noise_est)
-    wSDR = mSDRLoss(clean, clean_est)
+    wSDR = a * mSDRLoss(clean, clean_est) + (1 - a) * mSDRLoss(noise, noise_est)
+    #wSDR = mSDRLoss(clean, clean_est)
     return torch.mean(wSDR)
         
 def l2_norm(s1, s2):
