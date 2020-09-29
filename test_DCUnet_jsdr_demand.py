@@ -16,8 +16,6 @@ from tensorboardX import SummaryWriter
 from dataset.demand_dataset_test import *
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_day', type=str, required=True)
-    parser.add_argument('--snr', type=str, required=True)
     parser.add_argument('--fs',type=int,required=True)
     parser.add_argument('--test_model', type=str,required=True)
     parser.add_argument('--test_data_txt', type=str,required=True)
@@ -47,8 +45,6 @@ if __name__ == '__main__':
     
     args = get_args()
     device = torch.device('cpu')
-    exp_day = args.exp_day
-    SNR = args.snr
     fs = args.fs/16 #16,32,48
     batch_size = 1
     win_len = 1024*fs
