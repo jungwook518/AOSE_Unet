@@ -8,7 +8,6 @@ import os
 import sys
 import math
 import random
-import librosa
 from fairseq import utils
 from DCUnet_jsdr_demand import *
 
