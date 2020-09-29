@@ -58,7 +58,7 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
             empty_in_i[:,:time_len]=data["audio_data_Imagine"][0]
             data["audio_data_Imagine"][0] = empty_in_i
             
-        elif 512 <= time_len < 1024
+        elif 512 <= time_len < 1024:
             empty_in_r = torch.zeros(int(win_len/2+1),1024)
             empty_in_r[:,:time_len]=data["audio_data_Real"][0]
             data["audio_data_Real"][0] = empty_in_r 
