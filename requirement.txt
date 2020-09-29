@@ -1,0 +1,7 @@
+torch
+torchaudio
+tensorflow
+tensorboard
+tensorboardx
+numpy
+fairseq
