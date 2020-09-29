@@ -33,7 +33,7 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
                 
     def __getitem__(self, index):
         data_item = self.data_paths[index] if self.data_paths is not None else None
-        
+        data_name = os.path.split(data_item[index])[1]
         win_len = int(1024*(self.fs))
         window=torch.hann_window(window_length=win_len, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False)
         hop_len = int(win_len/4)
@@ -43,12 +43,10 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
         spec_noi = torchaudio.functional.spectrogram(waveform=data_wav, pad=0, window=window, n_fft=win_len, hop_length=hop_len, win_length=win_len, power=None, normalized=False)
         input_wav_real = spec_noi[0,:,:,0]
         input_wav_imag = spec_noi[0,:,:,1]
-        print(input_wav_real.shape)
-        print(data_wav_len)
-        print(win_len)
-        data = {"id": index,"data_wav_len":data_wav_len, "audio_wav" : [data_wav],"audio_data_Real":[input_wav_real], "audio_data_Imagine":[input_wav_imag]}
+        
+        data = {"data_name": data_name,"data_wav_len":data_wav_len, "audio_wav" : [data_wav],"audio_data_Real":[input_wav_real], "audio_data_Imagine":[input_wav_imag]}
 
-        print(data)
+        
          
         data_wav_len = data["data_wav_len"]
         time_len = data["audio_data_Real"][0].shape[1]
@@ -60,15 +58,21 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
             empty_in_i[:,:time_len]=data["audio_data_Imagine"][0]
             data["audio_data_Imagine"][0] = empty_in_i
             
-            
+        elif 512 <= time_len < 1024
+            empty_in_r = torch.zeros(int(win_len/2+1),1024)
+            empty_in_r[:,:time_len]=data["audio_data_Real"][0]
+            data["audio_data_Real"][0] = empty_in_r 
+            empty_in_i = torch.zeros(int(win_len/2+1),1024)
+            empty_in_i[:,:time_len]=data["audio_data_Imagine"][0]
+            data["audio_data_Imagine"][0] = empty_in_i
         
         else:
-            data["audio_data_Real"][0] = data["audio_data_Real"][0][:,:512] 
-            data["audio_data_Imagine"][0] =  data["audio_data_Imagine"][0][:,:512] 
+            data["audio_data_Real"][0] = data["audio_data_Real"][0][:,:1024] 
+            data["audio_data_Imagine"][0] =  data["audio_data_Imagine"][0][:,:1024] 
             
 
 
-        print(data)
+        
       
         return data
         
