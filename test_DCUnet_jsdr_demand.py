@@ -10,12 +10,12 @@ import math
 import random
 from fairseq import utils
 from DCUnet_jsdr_demand import *
-
+import librosa
 from tensorboardX import SummaryWriter
 from dataset.demand_dataset_test import *
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--fs',type=int,required=True)
+    parser.add_argument('--fs',type=float,required=True)
     parser.add_argument('--test_model', type=str,required=True)
     parser.add_argument('--test_data_txt', type=str,required=True)
     parser.add_argument('--test_data_output_path', type=str,required=True)
@@ -45,7 +45,12 @@ if __name__ == '__main__':
     args = get_args()
     device = torch.device('cpu')
     fs = args.fs/16 #16,32,48
+    orig_fs = args.fs/16
     batch_size = 1
+    if fs!=1 and fs!=2 and fs!=3:
+        fs = 1
+        win_len = 1024*fs
+        window=torch.hann_window(window_length=int(win_len), periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
     win_len = 1024*fs
     window=torch.hann_window(window_length=int(win_len), periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
     test_model = args.test_model
@@ -53,7 +58,7 @@ if __name__ == '__main__':
 
     data_test = args.test_data_txt
     test_data_output_path = args.test_data_output_path
-    test_dataset = AV_Lrs2_pickleDataset(data_test,fs)
+    test_dataset = AV_Lrs2_pickleDataset(data_test,fs,orig_fs)
     test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=batch_size, shuffle=False,num_workers=8)
     
     model_test = UNet().to(device)

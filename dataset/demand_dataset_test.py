@@ -20,24 +20,33 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import pickle
 import time
+import librosa
 
 class AV_Lrs2_pickleDataset(FairseqDataset):
 
 
 
-    def __init__(self,noise_pickle_paths,fs):
+    def __init__(self,noise_pickle_paths,fs,orig_fs):
 
         self.data_paths = np.loadtxt(noise_pickle_paths,str)
         self.fs = fs
+        self.orig_fs = orig_fs
         
                 
     def __getitem__(self, index):
+        
         data_item = self.data_paths[index] if self.data_paths is not None else None
         data_name = os.path.splitext(os.path.split(data_item)[1])[0]
         win_len = int(1024*(self.fs))
         window=torch.hann_window(window_length=win_len, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False)
         hop_len = int(win_len/4)
-        data_wav,_ = torchaudio.load(data_item)
+        if self.orig_fs !=1 and self.orig_fs!=2 and self.orig_fs!=3:
+            data_wav,_ = librosa.load(self.data_paths[index],sr=16000)
+            data_wav = torch.from_numpy(data_wav).unsqueeze(0)
+            
+        
+        else:
+            data_wav,_ = torchaudio.load(data_item)
         
         data_wav_len = data_wav.shape[1]
         spec_noi = torchaudio.functional.spectrogram(waveform=data_wav, pad=0, window=window, n_fft=win_len, hop_length=hop_len, win_length=win_len, power=None, normalized=False)
