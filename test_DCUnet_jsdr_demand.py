@@ -20,6 +20,8 @@ def get_args():
     parser.add_argument('--snr', type=str, required=True)
     parser.add_argument('--fs',type=int,required=True)
     parser.add_argument('--test_model', type=str,required=True)
+    parser.add_argument('--test_data_txt', type=str,required=True)
+    parser.add_argument('--test_data_output_path', type=str,required=True)
     args = parser.parse_args()
     return args
 
@@ -54,7 +56,8 @@ if __name__ == '__main__':
     test_model = args.test_model
     num_epochs = 1
 
-    data_test = "/home/nas/user/jungwook/fairseq/examples/audio_visual_speech_enhancement/Magnitude_subnetwork/sample/sample_data.txt"
+    data_test = args.test_data_txt
+    test_data_output_path = args.test_data_output_path
     test_dataset = AV_Lrs2_pickleDataset(data_test,fs)
     test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=batch_size, shuffle=False,num_workers=8)
     
@@ -83,12 +86,12 @@ if __name__ == '__main__':
             input_audio = tensor2audio(input_audio,window,length=data_wav_len)
 
             
-            audiosave_path = "audio_output/DCUnet_sample_test_"+str(exp_day)+'_'+str(SNR)+"db"
+            audiosave_path = test_data_output_path
             if not os.path.exists(audiosave_path):
                 os.makedirs(audiosave_path)
             
-            
-            torchaudio.save(audiosave_path+"/enhance_"+str(i)+".wav", src=torch.from_numpy(audio_me_pe[:data_wav_len]).unsqueeze(0), sample_rate=int(16000*fs))
+            data_name = batch_data["data_name"][0]
+            torchaudio.save(audiosave_path+"/"+data_name+".wav", src=torch.from_numpy(audio_me_pe[:data_wav_len]).unsqueeze(0), sample_rate=int(16000*fs))
 
 
 
