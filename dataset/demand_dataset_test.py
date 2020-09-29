@@ -33,7 +33,7 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
                 
     def __getitem__(self, index):
         data_item = self.data_paths[index] if self.data_paths is not None else None
-        data_name = os.path.split(data_item[index])[1]
+        data_name = os.path.splitext(os.path.split(data_item)[1])[0]
         win_len = int(1024*(self.fs))
         window=torch.hann_window(window_length=win_len, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False)
         hop_len = int(win_len/4)
@@ -43,6 +43,7 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
         spec_noi = torchaudio.functional.spectrogram(waveform=data_wav, pad=0, window=window, n_fft=win_len, hop_length=hop_len, win_length=win_len, power=None, normalized=False)
         input_wav_real = spec_noi[0,:,:,0]
         input_wav_imag = spec_noi[0,:,:,1]
+        
         
         data = {"data_name": data_name,"data_wav_len":data_wav_len, "audio_wav" : [data_wav],"audio_data_Real":[input_wav_real], "audio_data_Imagine":[input_wav_imag]}
 
