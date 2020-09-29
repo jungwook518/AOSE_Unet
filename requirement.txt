@@ -1,5 +1,5 @@
-torch
-torchaudio
+torch==1.4.0
+torchaudio==0.4.0
 tensorflow==2.3.0
 tensorboard
 tensorboardx
