@@ -17,10 +17,14 @@ def get_args():
     parser.add_argument('--gpu', type=str, required=True)
     parser.add_argument('--exp_day', type=str, required=True)
     parser.add_argument('--snr', type=str, required=True)
+    parser.add_argument('--train_data', type=str, required=True)
+    parser.add_argument('--test_data', type=str, required=True)
     parser.add_argument('--batch_size', type=int, required=True)
     parser.add_argument('--learning_rate', type=float,required=True)
     parser.add_argument('--frame_num', type=int,required=True)
     parser.add_argument('--fs',type=int,required=True)
+    parser.add_argument('--modelsave_path', type=str, required=True)
+
     args = parser.parse_args()
     return args
     
@@ -56,9 +60,9 @@ if __name__ == '__main__':
     
 
     best_loss = 10
-    data_train="data_txt/demand_train_noise_"+str(SNR)+'db.txt'
-    data_val="data_txt/demand_test_noise_"+str(SNR)+'db.txt'
-
+    data_train=args.train_data
+    data_val=args.test_data
+    modelsave_path = args.modelsave_path
     train_dataset = AV_Lrs2_pickleDataset(data_train,frame_num,fs)
     val_dataset = AV_Lrs2_pickleDataset(data_val,frame_num,fs)
     
@@ -96,7 +100,7 @@ if __name__ == '__main__':
         train_loss = train_loss/len(train_loader)
         print("train_loss")
         print(train_loss)
-        modelsave_path = 'model_ckpt/DCUnet_jsdr_demand/'+str(exp_day)+'/SNR'+str(SNR)+'/learning_rate_'+str(learning_rate)+'_batch_'+str(batch_size)+'_frame_num_'+str(frame_num)
+        #modelsave_path = 'model_ckpt/DCUnet_jsdr_demand/'+str(exp_day)+'/SNR'+str(SNR)+'/learning_rate_'+str(learning_rate)+'_batch_'+str(batch_size)+'_frame_num_'+str(frame_num)
         if not os.path.exists(modelsave_path):
             os.makedirs(modelsave_path)
         #torch.save(model.state_dict(), str(modelsave_path)+'/epoch'+str(epoch)+'model.pth')
