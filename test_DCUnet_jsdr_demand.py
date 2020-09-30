@@ -38,6 +38,13 @@ def complex_demand_audio(complex_ri,window,length,fs):
     audio = audio.numpy().squeeze()
     return audio
 
+def find_nearest(array,value):
+    idx = np.searchsorted(array, value, side="left")
+    if idx > 0 and (idx == len(array) or math.fabs(value - array[idx-1]) < math.fabs(value - array[idx])):
+        return array[idx-1]
+    else:
+        return array[idx]
+        
 if __name__ == '__main__':
     
 
@@ -47,9 +54,11 @@ if __name__ == '__main__':
     fs = args.fs/16 #16,32,48
     orig_fs = args.fs/16
     batch_size = 1
+    target_fs =[1,2,3] #16,32,48
+    
     if fs!=1 and fs!=2 and fs!=3:
-        fs = 1
-        win_len = 1024*fs
+        re_fs = find_nearest(target_fs,fs)
+        win_len = 1024*re_fs
         window=torch.hann_window(window_length=int(win_len), periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
     win_len = 1024*fs
     window=torch.hann_window(window_length=int(win_len), periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
