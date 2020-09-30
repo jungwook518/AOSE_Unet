@@ -21,7 +21,17 @@ from torch.utils.data import DataLoader
 import pickle
 import time
 import librosa
+import math
 
+
+
+def find_nearest(array,value):
+    idx = np.searchsorted(array, value, side="left")
+    if idx > 0 and (idx == len(array) or math.fabs(value - array[idx-1]) < math.fabs(value - array[idx])):
+        return array[idx-1]
+    else:
+        return array[idx]
+        
 class AV_Lrs2_pickleDataset(FairseqDataset):
 
 
@@ -34,14 +44,16 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
         
                 
     def __getitem__(self, index):
-        
+        target_fs =[1,2,3] #16,32,48
         data_item = self.data_paths[index] if self.data_paths is not None else None
         data_name = os.path.splitext(os.path.split(data_item)[1])[0]
         win_len = int(1024*(self.fs))
         window=torch.hann_window(window_length=win_len, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False)
         hop_len = int(win_len/4)
         if self.orig_fs !=1 and self.orig_fs!=2 and self.orig_fs!=3:
-            data_wav,_ = librosa.load(self.data_paths[index],sr=16000)
+            re_fs = find_nearest(target_fs,self.orig_fs)
+            
+            data_wav,_ = librosa.load(self.data_paths[index],sr=int(re_fs*16000))
             data_wav = torch.from_numpy(data_wav).unsqueeze(0)
             
         
@@ -54,7 +66,7 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
         input_wav_imag = spec_noi[0,:,:,1]
         
         
-        data = {"data_name": data_name,"data_wav_len":data_wav_len, "audio_wav" : [data_wav],"audio_data_Real":[input_wav_real], "audio_data_Imagine":[input_wav_imag]}
+        data = {"data_name": data_name,"data_wav_len":data_wav_len, "sr":re_fs,"audio_wav" : [data_wav],"audio_data_Real":[input_wav_real], "audio_data_Imagine":[input_wav_imag]}
 
         
          
