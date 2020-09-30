@@ -12,12 +12,12 @@ from fairseq import utils
 from DCUnet_jsdr_demand import *
 import librosa
 from tensorboardX import SummaryWriter
-from dataset.demand_dataset_test import *
+from dataset.demand_dataset_test_dir import *
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--fs',type=float,required=True)
     parser.add_argument('--test_model', type=str,required=True)
-    parser.add_argument('--test_data_txt', type=str,required=True)
+    parser.add_argument('--test_data_root_folder', type=str,required=True)
     parser.add_argument('--test_data_output_path', type=str,required=True)
     args = parser.parse_args()
     return args
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     test_model = args.test_model
     num_epochs = 1
 
-    data_test = args.test_data_txt
+    data_test = args.test_data_root_folder
     test_data_output_path = args.test_data_output_path
     test_dataset = AV_Lrs2_pickleDataset(data_test,fs,orig_fs)
     test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=batch_size, shuffle=False,num_workers=8)
@@ -89,9 +89,10 @@ if __name__ == '__main__':
             audiosave_path = test_data_output_path
             if not os.path.exists(audiosave_path):
                 os.makedirs(audiosave_path)
-            
+             
             data_name = batch_data["data_name"][0]
-            torchaudio.save(audiosave_path+"/"+data_name+".wav", src=torch.from_numpy(audio_me_pe[:data_wav_len]).unsqueeze(0), sample_rate=int(16000*fs))
+            re_sr = batch_data["sr"][0]
+            torchaudio.save(audiosave_path+"/"+data_name+".wav", src=torch.from_numpy(audio_me_pe[:data_wav_len]).unsqueeze(0), sample_rate=int(16000*re_sr))
 
 
 
