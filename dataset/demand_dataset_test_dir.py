@@ -43,13 +43,11 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
 
 
 
-    def __init__(self,noise_pickle_paths,fs,orig_fs):
+    def __init__(self,data_test_list,re_fs,orig_fs):
 
-        self.data_paths = noise_pickle_paths
-        self.fs = fs
+        self.wav_list = data_test_list
+        self.fs = re_fs
         self.orig_fs = orig_fs
-        self.wav_list =[]
-        self.wav_list, self.wav_list_len = search(self.data_paths,self.wav_list)
                 
     def __getitem__(self, index):
         target_fs =[1,2,3] #16,32,48
@@ -66,10 +64,14 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
             
         
         else:
-            data_wav,_ = torchaudio.load(data_item)
+            re_fs = self.orig_fs
+            data_wav,_ = librosa.load(self.wav_list[index],sr=int(re_fs*16000))
+            data_wav = torch.from_numpy(data_wav).unsqueeze(0)
         
         data_wav_len = data_wav.shape[1]
         spec_noi = torchaudio.functional.spectrogram(waveform=data_wav, pad=0, window=window, n_fft=win_len, hop_length=hop_len, win_length=win_len, power=None, normalized=False)
+        #print(re_fs)
+        #print(spec_noi.shape)
         input_wav_real = spec_noi[0,:,:,0]
         input_wav_imag = spec_noi[0,:,:,1]
         
@@ -80,6 +82,7 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
          
         data_wav_len = data["data_wav_len"]
         time_len = data["audio_data_Real"][0].shape[1]
+        #print(data["audio_data_Real"][0].shape)
         if time_len < 512:
             empty_in_r = torch.zeros(int(win_len/2+1),512)
             empty_in_r[:,:time_len]=data["audio_data_Real"][0]
@@ -100,7 +103,7 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
             data["audio_data_Real"][0] = data["audio_data_Real"][0][:,:1024] 
             data["audio_data_Imagine"][0] =  data["audio_data_Imagine"][0][:,:1024] 
             
-
+        #print(data["audio_data_Real"][0].shape)
 
         
       
@@ -109,7 +112,7 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
     
 
     def __len__(self):
-        return self.wav_list_len
+        return len(self.wav_list)
     
 
 

@@ -44,7 +44,17 @@ def find_nearest(array,value):
         return array[idx-1]
     else:
         return array[idx]
-        
+    
+    
+def search(d_name,li):
+    for (paths, dirs, files) in os.walk(d_name):
+        for filename in files:
+            ext = os.path.splitext(filename)[-1]
+            if ext == '.wav':
+                li.append(os.path.join(os.path.join(os.path.abspath(d_name),paths), filename))
+    len_li = len(li)            
+    return li
+    
 if __name__ == '__main__':
     
 
@@ -60,14 +70,18 @@ if __name__ == '__main__':
         re_fs = find_nearest(target_fs,fs)
         win_len = 1024*re_fs
         window=torch.hann_window(window_length=int(win_len), periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
-    win_len = 1024*fs
-    window=torch.hann_window(window_length=int(win_len), periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
+    else:
+        re_fs = fs
+        win_len = 1024*fs
+        window=torch.hann_window(window_length=int(win_len), periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False).to(device)
     test_model = args.test_model
     num_epochs = 1
 
     data_test = args.test_data_root_folder
+    data_test_list=[]
+    data_test_list=search(data_test,data_test_list)
     test_data_output_path = args.test_data_output_path
-    test_dataset = AV_Lrs2_pickleDataset(data_test,fs,orig_fs)
+    test_dataset = AV_Lrs2_pickleDataset(data_test_list,re_fs,orig_fs)
     test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=batch_size, shuffle=False,num_workers=8)
     
     model_test = UNet().to(device)
@@ -87,7 +101,7 @@ if __name__ == '__main__':
             enhance_r = enhance_r.unsqueeze(3)
             enhance_i = enhance_i.unsqueeze(3)
             enhance_spec = torch.cat((enhance_r,enhance_i),3)
-            audio_me_pe = complex_demand_audio(enhance_spec,window,audio_maxlen,fs)
+            audio_me_pe = complex_demand_audio(enhance_spec,window,audio_maxlen,re_fs)
             
             data_wav_len = batch_data["data_wav_len"][0]
             
