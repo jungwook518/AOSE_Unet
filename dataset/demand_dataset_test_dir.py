@@ -38,8 +38,21 @@ def find_nearest(array,value):
         return array[idx-1]
     else:
         return array[idx]
-        
-class AV_Lrs2_pickleDataset(FairseqDataset):
+
+
+#def my_collate(batch):
+    
+#    data_name,data_wav_len, re_fs,data_wav,input_wav_real, input_wav_imag = list(zip(*batch))
+#    print(data_wav_len)
+#    maxlen = max([len(x) for x in data])
+#    zero_arr = np.zeros([B, maxlen])
+#    for i in range(B):
+#        zero_arr[i] = np.concatenate((data[i], np.zeros(maxlen - len(data[i]))), axis=0)
+#    zero_arr = torch.FloatTensor(zero_arr)
+#    label = torch.LongTensor(label)
+#    return (zero_arr, label)
+  
+class AV_Lrs2_pickleDataset(Dataset):
 
 
 
@@ -82,7 +95,7 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
          
         data_wav_len = data["data_wav_len"]
         time_len = data["audio_data_Real"][0].shape[1]
-        #print(data["audio_data_Real"][0].shape)
+        print(data["audio_data_Real"][0].shape)
         if time_len < 512:
             empty_in_r = torch.zeros(int(win_len/2+1),512)
             empty_in_r[:,:time_len]=data["audio_data_Real"][0]
@@ -106,8 +119,8 @@ class AV_Lrs2_pickleDataset(FairseqDataset):
         #print(data["audio_data_Real"][0].shape)
 
         
-      
         return data
+        #return (data_name,data_wav_len,re_fs,data_wav,input_wav_real,input_wav_imag)
         
     
 
