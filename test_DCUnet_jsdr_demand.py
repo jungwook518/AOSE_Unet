@@ -13,6 +13,8 @@ from DCUnet_jsdr_demand import *
 import librosa
 from tensorboardX import SummaryWriter
 from dataset.demand_dataset_test_librosa import *
+from scipy.io import savemat
+import scipy.io.wavfile
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--fs',type=float,required=True)
@@ -102,7 +104,7 @@ if __name__ == '__main__':
             enhance_i = enhance_i.unsqueeze(3)
             enhance_spec = torch.cat((enhance_r,enhance_i),3)
             audio_me_pe = complex_demand_audio(enhance_spec,window,audio_maxlen,re_fs)
-            print(audio_me_pe)
+            
        
             audiosave_path = test_data_output_path
             if not os.path.exists(audiosave_path):
@@ -111,10 +113,14 @@ if __name__ == '__main__':
             data_name = data_name[0]
             re_sr = re_fs
             audio_me_pe=audio_me_pe.to('cpu')
-
+            
+            #print(audio_me_pe.shape)
+            #print(data_wav_len)
+            #audio_me_pe = audio_me_pe[:,:int(data_wav_len)]
+            #print(audio_me_pe.shape)
             #torchaudio.save(audiosave_path+"/"+data_name+".wav", src=torch.from_numpy(audio_me_pe[:data_wav_len]).unsqueeze(0), sample_rate=int(16000*re_sr))
-            torchaudio.save(audiosave_path+"/"+data_name+".wav", src=audio_me_pe[:int(data_wav_len)], sample_rate=int(16000*re_sr))
-
+            torchaudio.save(audiosave_path+"/"+data_name+".wav",src=torch.clamp(audio_me_pe[:,:int(data_wav_len)],-1,1), sample_rate=int(16000*re_sr))
+            #scipy.io.wavfile.write(audiosave_path+"/"+data_name+"_lib.wav", int(16000*re_sr), data=n)
 
 
 
