@@ -17,8 +17,8 @@ def get_args():
     parser.add_argument('--gpu', type=str, required=True)
     parser.add_argument('--exp_day', type=str, required=True)
     parser.add_argument('--snr', type=str, required=True)
-    parser.add_argument('--train_data', type=str, required=True)
-    parser.add_argument('--test_data', type=str, required=True)
+    parser.add_argument('--train_data_root_folder', type=str,required=True)
+    parser.add_argument('--val_data_root_folder', type=str,required=True)
     parser.add_argument('--batch_size', type=int, required=True)
     parser.add_argument('--learning_rate', type=float,required=True)
     parser.add_argument('--frame_num', type=int,required=True)
@@ -36,7 +36,14 @@ def complex_demand_audio(complex_ri,window,length,fs):
     audio = torchaudio.functional.istft(stft_matrix = complex_ri, n_fft=int(1024*fs), hop_length=int(256*fs), win_length=int(1024*fs), window=window, center=True, pad_mode='reflect', normalized=False, onesided=True, length=length)
     
     return audio
-    
+def search(d_name,li):
+    for (paths, dirs, files) in os.walk(d_name):
+        for filename in files:
+            ext = os.path.splitext(filename)[-1]
+            if ext == '.pkl':
+                li.append(os.path.join(os.path.join(os.path.abspath(d_name),paths), filename))
+    len_li = len(li)            
+    return li
 if __name__ == '__main__':
 
 
@@ -60,14 +67,20 @@ if __name__ == '__main__':
     
 
     best_loss = 10
-    data_train=args.train_data
-    data_val=args.test_data
-    modelsave_path = args.modelsave_path
-    train_dataset = AV_Lrs2_pickleDataset(data_train,frame_num,fs)
-    val_dataset = AV_Lrs2_pickleDataset(data_val,frame_num,fs)
+    data_train = args.train_data_root_folder
+    data_train_list=[]
+    data_train_list=search(data_train,data_train_list)
     
-    train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=False)
-    val_loader = torch.utils.data.DataLoader(dataset=val_dataset,batch_size=batch_size,shuffle=True,num_workers=8)
+    data_val = args.val_data_root_folder
+    data_val_list=[]
+    data_val_list=search(data_val,data_val_list)
+    modelsave_path = args.modelsave_path
+    
+    train_dataset = AV_Lrs2_pickleDataset(data_train_list,frame_num,fs)
+    val_dataset = AV_Lrs2_pickleDataset(data_val_list,frame_num,fs)
+    
+    train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=True,num_workers=8)
+    val_loader = torch.utils.data.DataLoader(dataset=val_dataset,batch_size=batch_size,shuffle=False,num_workers=8)
     model = UNet().to(device)
     
     criterion=wSDRLoss
@@ -100,10 +113,8 @@ if __name__ == '__main__':
         train_loss = train_loss/len(train_loader)
         print("train_loss")
         print(train_loss)
-        #modelsave_path = 'model_ckpt/DCUnet_jsdr_demand/'+str(exp_day)+'/SNR'+str(SNR)+'/learning_rate_'+str(learning_rate)+'_batch_'+str(batch_size)+'_frame_num_'+str(frame_num)
         if not os.path.exists(modelsave_path):
             os.makedirs(modelsave_path)
-        #torch.save(model.state_dict(), str(modelsave_path)+'/epoch'+str(epoch)+'model.pth')
         torch.save(model.state_dict(), str(modelsave_path)+'/lastmodel.pth')
         model.eval()
         with torch.no_grad():
