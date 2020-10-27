@@ -114,13 +114,14 @@ if __name__ == '__main__':
             re_sr = re_fs
             audio_me_pe=audio_me_pe.to('cpu')
             
-            #print(audio_me_pe.shape)
-            #print(data_wav_len)
-            #audio_me_pe = audio_me_pe[:,:int(data_wav_len)]
-            #print(audio_me_pe.shape)
-            #torchaudio.save(audiosave_path+"/"+data_name+".wav", src=torch.from_numpy(audio_me_pe[:data_wav_len]).unsqueeze(0), sample_rate=int(16000*re_sr))
-            torchaudio.save(audiosave_path+"/"+data_name+".wav",src=torch.clamp(audio_me_pe[:,:int(data_wav_len)],-1,1), sample_rate=int(16000*re_sr))
-            #scipy.io.wavfile.write(audiosave_path+"/"+data_name+"_lib.wav", int(16000*re_sr), data=n)
+            #n=audio_me_pe.numpy()
+            #nn={"rmask":n}
+            #savemat(audiosave_path+"/"+data_name+".mat", nn)
+            if audio_me_pe.max() >=1 or audio_me_pe.min() <=-1:
+                audio_me_pe = audio_me_pe*0.8
+            #torchaudio.save(audiosave_path+"/"+data_name+".wav",src=torch.clamp(audio_me_pe[:,:int(data_wav_len)],-1,1), sample_rate=int(16000*re_sr))
+            torchaudio.save(audiosave_path+"/"+data_name+".wav",src=audio_me_pe[:,:int(data_wav_len)], sample_rate=int(16000*re_sr))
+            
 
 
 
