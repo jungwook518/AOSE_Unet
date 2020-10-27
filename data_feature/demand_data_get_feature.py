@@ -1,6 +1,5 @@
 import os
 import numpy as np
-from fairseq.data import FairseqDataset
 import sys
 import random
 import math
@@ -15,18 +14,30 @@ import numpy as np
 import torch
 import time
 import torchaudio
+import argparse
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--clean_train', type=str, required=True)
+    parser.add_argument('--noise_train', type=str, required=True)
+    parser.add_argument('--clean_test', type=str, required=True)
+    parser.add_argument('--noise_test', type=str, required=True)
+    parser.add_argument('--train_save_path', type=str, required=True)
+    parser.add_argument('--test_save_path', type=str, required=True)
+    parser.add_argument('--fs', type=int, required=True)
+    args = parser.parse_args()
+    return args
 
+class AV_Lrs2Dataset_make_feature(Dataset):
 
-
-class AV_Lrs2Dataset_make_feature(FairseqDataset):
-
-    def __init__(self, target_paths, noise_paths,fs):
+    def __init__(self, target_paths, noise_paths,save_path,fs):
 
         self.tgt_paths = np.loadtxt(target_paths,str)
         self.noi_paths = np.loadtxt(noise_paths,str)
+        self.save_path = save_path
         self.fs = fs
     def __getitem__(self, index):
-        
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
         win_len = int(1024*(fs/16))
         window=torch.hann_window(window_length=win_len, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False)
         tgt_item = self.tgt_paths[index] if self.tgt_paths is not None else None
@@ -46,21 +57,39 @@ class AV_Lrs2Dataset_make_feature(FairseqDataset):
         num = index
 
         batch_dict = {"id": index,"tgt_wav_len":tgt_wav_len, "audio_wav" : [noi_wav, tgt_wav],"audio_data_Real":[input_wav_real,tgt_wav_real], "audio_data_Imagine":[input_wav_imag,tgt_wav_imag]}
-        with open('/home/nas/DB/[DB]_voice_corpus/train/noise_000db/'+str(num)+'.pkl', 'wb') as f:
+        
+        with open(self.save_path+'/'+str(num)+'.pkl', 'wb') as f:
             pickle.dump(batch_dict, f)
+        
         return index
 
 
     def __len__(self):
-        return len(self.aud_paths)
+        return len(self.tgt_paths)
 
 if __name__ == '__main__':
-
-    clean_train="/home/nas/DB/[DB]_voice_corpus/train/clean_voice_train_path.txt"
-    noise_train="/home/nas/DB/[DB]_voice_corpus/train/noise_voice_train_path.txt"
-    train_dataset = AV_Lrs2Dataset_make_feature(clean_train,noise_train,fs) #fs 16, 32, 48
+    
+    args = get_args()
+    #clean_train="/home/nas/DB/[DB]_voice_corpus/train/clean_voice_train_path.txt"
+    #noise_train="/home/nas/DB/[DB]_voice_corpus/train/noise_voice_train_path.txt"
+    clean_train = args.clean_train
+    noise_train = args.noise_train
+    
+    clean_test = args.clean_test
+    noise_test = args.noise_test
+    
+    train_save_path = args.train_save_path
+    test_save_path = args.test_save_path
+    
+    fs = args.fs
+    
+    train_dataset = AV_Lrs2Dataset_make_feature(clean_train,noise_train,train_save_path,fs) #fs 16, 32, 48
     for i in range(len(train_dataset)):
-        print(i)
+        print(train_dataset[i])
+    
+    test_dataset = AV_Lrs2Dataset_make_feature(clean_test,noise_test,test_save_path,fs) #fs 16, 32, 48
+    for i in range(len(test_dataset)):
+        print(test_dataset[i])
 
     
 

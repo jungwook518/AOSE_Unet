@@ -1,14 +1,6 @@
-# Copyright (c) Facebook, Inc. and its affiliates.
-#
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
-
 import os
 import numpy as np
 from fairseq.data import FairseqDataset
-
-#from .data_utils import *
-#from .jung_collaters import Seq2SeqCollater
 import sys
 import random
 import math
@@ -21,13 +13,13 @@ from torch.utils.data import DataLoader
 import pickle
 import time
 
-class AV_Lrs2_pickleDataset(FairseqDataset):
+class AV_Lrs2_pickleDataset(Dataset):
 
 
 
-    def __init__(self,noise_pickle_paths,frame_num,fs):
+    def __init__(self,data_path_list,frame_num,fs):
 
-        self.data_paths = np.loadtxt(noise_pickle_paths,str)
+        self.data_paths = data_path_list
         self.frame_num = frame_num
         self.fs = int(fs)
                 
