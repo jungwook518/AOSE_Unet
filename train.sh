@@ -3,8 +3,8 @@
 gpu='0'
 exp_day='1027'
 snr='0'
-train_data_root_folder='/home/nas/DB/[DB]_voice_corpus/train/practice/'
-val_data_root_folder='/home/nas/DB/[DB]_voice_corpus/test/practice/'
+train_data_root_folder='/home/nas/DB/[DB]_voice_corpus/train/practice/' #make_data_feature.sh 's train_save_path 
+val_data_root_folder='/home/nas/DB/[DB]_voice_corpus/test/practice/' #make_data_feature.sh 's test_save_path
 batch_size='10' #batch 10 --> 11G gpu memory
 learning_rate='0.0001'
 frame_num='128' #-->128,256..2's power
