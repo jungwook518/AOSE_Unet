@@ -113,12 +113,28 @@ if __name__ == '__main__':
             data_name = data_name[0]
             re_sr = re_fs
             audio_me_pe=audio_me_pe.to('cpu')
-            
+
             #n=audio_me_pe.numpy()
             #nn={"rmask":n}
             #savemat(audiosave_path+"/"+data_name+".mat", nn)
+            max_data_wav = data_wav.max()
+            min_data_wav = data_wav.min()
+            if abs(max_data_wav) >= abs(min_data_wav):
+                norm_data = abs(min_data_wav)
+            else:
+                norm_data = abs(max_data_wav)
+            print(max_data_wav)
+            print(min_data_wav)
             if audio_me_pe.max() >=1 or audio_me_pe.min() <=-1:
-                audio_me_pe = audio_me_pe*0.8
+                max_aud = audio_me_pe.max()
+                min_aud = audio_me_pe.min()
+                if abs(max_aud) >= abs(min_aud):
+                    audio_me_pe = audio_me_pe * (norm_data/max_aud)
+                else:
+                    audio_me_pe = audio_me_pe * (norm_data/abs(min_aud))
+            
+            #    audio_me_pe = audio_me_pe*0.8
+            #print(audio_me_pe.dtype)
             torchaudio.save(audiosave_path+"/"+data_name+".wav",src=audio_me_pe[:,:int(data_wav_len)], sample_rate=int(16000*re_sr))
             
 
