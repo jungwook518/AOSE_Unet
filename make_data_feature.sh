@@ -6,7 +6,7 @@ clean_test='/home/nas/DB/[DB]_voice_corpus/test/clean_test_prac.txt'
 noise_test='/home/nas/DB/[DB]_voice_corpus/test/noise_test_prac.txt'
 train_save_path='/home/nas/DB/[DB]_voice_corpus/train/practice/'
 test_save_path='/home/nas/DB/[DB]_voice_corpus/test/practice/'
-fs='16'
+fs='16' #fixing
 
 cd data_feature
 python demand_data_get_feature.py \

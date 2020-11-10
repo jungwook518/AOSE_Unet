@@ -1,4 +1,4 @@
-
+import argparse
 import os
 import numpy as np
 from fairseq.data import FairseqDataset
@@ -40,7 +40,7 @@ def compare_noise(noise_wav_list):
 def compare_src_noise(src, noisy):
     src_len = src.shape[1]
     noisy_len = noisy.shape[1]
-    k = np.random.randint(low=2400000, high = noisy_len - src_len)
+    k = np.random.randint(low=0, high = noisy_len - src_len)
     np_src = src.squeeze(0)
     np_noisy = noisy.squeeze(0)
     if src_len > noisy_len :
@@ -118,38 +118,35 @@ def data_augment_onthefly(src,noisy,SNR,opt):
 
 class AV_Lrs2Dataset(FairseqDataset):
 
-    def __init__(self, aud_paths, noi_paths,tgt_paths,SNR,opt):
+    def __init__(self,noi_paths,tgt_paths,SNR,opt,save_path,fs):
 
-        self.aud_paths = np.loadtxt(aud_paths,str)
         self.noi_paths = np.loadtxt(noi_paths,str)
         self.tgt_paths = np.loadtxt(tgt_paths,str)
         self.snr = SNR
         self.opt = opt #clean, gaussian, noise 1,2,3
-        
-
+        self.save_path = save_path
+        self.fs = fs
                 
     def __getitem__(self, index):
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
         self.noisy_paths = []
-        
         ############ noisy audio prepare ######################
         
         k = np.random.randint(low=0, high=len(self.noi_paths))
         self.noisy_paths.append(self.noi_paths[k])
 
-        
-        
+
         ################### audio prepare #######################
-        
+        win_len = int(1024*(fs/16))
+        window=torch.hann_window(window_length=win_len, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False)
         tgt_item = self.tgt_paths[index] if self.tgt_paths is not None else None
-        
         tgt_wav, input_mix_wav = data_augment_onthefly(tgt_item,self.noisy_paths,self.snr,self.opt)
-        tgt_wav_len = tgt_wav.shape[1]
-        window=torch.hann_window(window_length=1024, periodic=True, dtype=None, layout=torch.strided, device=None, requires_grad=False)
         
-        spec_tgt = torchaudio.functional.spectrogram(waveform=tgt_wav, pad=0, window=window, n_fft=1024, hop_length=256, win_length=1024, power=None, normalized=False)
-        spec_input = torchaudio.functional.spectrogram(waveform=input_mix_wav, pad=0, window=window, n_fft=1024, hop_length=256, win_length=1024, power=None, normalized=False)
+        tgt_wav_len = tgt_wav.shape[1]
+        spec_tgt = torchaudio.functional.spectrogram(waveform=tgt_wav, pad=0, window=window, n_fft=win_len, hop_length=int(win_len/4), win_length=win_len, power=None, normalized=False)
+        spec_input = torchaudio.functional.spectrogram(waveform=input_mix_wav, pad=0, window=window, n_fft=win_len, hop_length=int(win_len/4), win_length=win_len, power=None, normalized=False)
         tgt_wav_real = spec_tgt[0,:,:,0]
-        print(tgt_wav_real.shape)
         tgt_wav_imag = spec_tgt[0,:,:,1]
         input_wav_real = spec_input[0,:,:,0]
         input_wav_imag = spec_input[0,:,:,1]
@@ -157,25 +154,40 @@ class AV_Lrs2Dataset(FairseqDataset):
         num = index
 
         batch_dict = {"id": index,"tgt_wav_len":tgt_wav_len, "audio_wav" : [input_mix_wav, tgt_wav],"audio_data_Real":[input_wav_real,tgt_wav_real], "audio_data_Imagine":[input_wav_imag,tgt_wav_imag]}
-        with open('/home/nas/DB/[DB]_voice_corpus/train/noise_0000db/'+str(num)+'.pkl', 'wb') as f:
-
+        
+        with open(self.save_path+'/'+str(num)+'.pkl', 'wb') as f:
             pickle.dump(batch_dict, f)
-
+        
         return index
 
 
 
     def __len__(self):
-        return len(self.aud_paths)
+        return len(self.tgt_paths)
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--clean_train_txt', type=str, required=True)
+    parser.add_argument('--noise_txt', type=str, required=True)
+    parser.add_argument('--save_path', type=str, required=True)
+    parser.add_argument('--snr', type=str, required=True)
+    parser.add_argument('--fs', type=int, required=True)
+    args = parser.parse_args()
+    return args
     
 if __name__ == '__main__':
-    clean_train="/home/nas/DB/[DB]_voice_corpus/train/clean_voice_train_path.txt"
-    noise="/home/nas/DB/[DB]DEMAND/demand_noise_path.txt"
-    SNR = 0
+    #clean_train="/home/nas/DB/[DB]_voice_corpus/train/clean_voice_train_path.txt"
+    #noise="/home/nas/DB/[DB]DEMAND/demand_noise_path.txt"
+    args = get_args()
+    clean_train = args.clean_train_txt
+    noise = args.noise_txt
+    save_path = args.save_path
+    SNR = args.snr
+    fs=args.fs
     opt = 3 # gaussian=2 , demand_noise=3
-    train_dataset = AV_Lrs2Dataset_make_feature(clean_train,noise_train,clean_train,SNR,opt)
+    train_dataset = AV_Lrs2Dataset(noise,clean_train,SNR,opt,save_path,fs)
     for i in range(len(train_dataset)):
-        print(i)
+        print(train_dataset[i])
 
     
 
