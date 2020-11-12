@@ -53,7 +53,7 @@ def search(d_name,li):
         for filename in files:
             ext = os.path.splitext(filename)[-1]
             if ext == '.wav':
-                li.append(os.path.join(os.path.join(os.path.abspath(d_name),paths), filename))
+                li.append(os.path.join(os.path.abspath(d_name), filename))
     len_li = len(li)            
     return li
     
@@ -84,6 +84,7 @@ if __name__ == '__main__':
     data_test = args.test_data_root_folder
     data_test_list=[]
     data_test_list=search(data_test,data_test_list)
+    print(data_test_list)
     test_data_output_path = args.test_data_output_path
     test_dataset = AV_Lrs2_pickleDataset(data_test_list,re_fs,orig_fs)
     test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=batch_size, collate_fn=lambda x:my_collate(x),shuffle=False,num_workers=8)
