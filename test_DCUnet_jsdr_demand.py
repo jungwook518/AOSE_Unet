@@ -53,7 +53,10 @@ def search(d_name,li):
         for filename in files:
             ext = os.path.splitext(filename)[-1]
             if ext == '.wav':
-                li.append(os.path.join(os.path.abspath(d_name), filename))
+                if filename[:1]=='.':
+                    continue
+                else:
+                    li.append(os.path.join(os.path.abspath(d_name), filename))
     len_li = len(li)            
     return li
     
