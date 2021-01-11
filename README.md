@@ -3,10 +3,10 @@
 ## 0. Prepare dataset 관련(본인 취향의 Dataset을 만들거면 필자처럼 안해도 됨)
 ### 1) download
 https://datashare.is.ed.ac.uk/handle/10283/2791  
-위 주소에서 train / test dataset 28spk download 한다.  
-파일들 이름들을 메모장에 저장한다.  
-ex)p224.wav  
-p225.wav  
+train / test dataset 28spk download
+파일 주소 위치 메모장에 저장.  
+ex)/home/nas/A/B/C/p224.wav  
+/home/nas/A/B/C/p225.wav  
 ...
 본인 취향인데 나는 feature를 저장하려고 이렇게 했다.  
 이렇게 해도 되고 안해도 되고 안 할 사람은 dataset을 본인 나름대로 짜면 된다.
