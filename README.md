@@ -2,12 +2,10 @@
 
 ## 0. Prepare dataset 관련(본인 취향의 Dataset을 만들거면 필자처럼 안해도 됨)
 ### 1) download
-https://datashare.is.ed.ac.uk/handle/10283/2791  
-train / test dataset 28spk download
-파일 주소 위치 메모장에 저장.  
-ex)
-/home/nas/A/B/C/p224.wav  
-/home/nas/A/B/C/p225.wav  
+1. download and extract the file train / test dataset 28spk https://datashare.is.ed.ac.uk/handle/10283/2791  
+2. File address location written in txt file
+'''/home/nas/A/B/C/p224.wav  
+'''/home/nas/A/B/C/p225.wav  
 
 ### 2) audio data를 STFT 하여 저장한다.  
 48khz 데이터들을 16khz로 resampling해준다. 필자는 16khz로 사용했다.
