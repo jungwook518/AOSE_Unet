@@ -22,7 +22,7 @@
 
 ## 2. model 관련  
 1. ```frame_num``` is time value of STFT.
-2. recommend ```frame_num = 128 or 256 like 2's power'''
+2. recommend ```frame_num = 128 or 256 like 2's power```
 3. if you don't like it, change model padding, stride, kernel etc.
 
 ## 3. test 관련  
