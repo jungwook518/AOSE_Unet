@@ -5,12 +5,9 @@
 https://datashare.is.ed.ac.uk/handle/10283/2791  
 train / test dataset 28spk download
 파일 주소 위치 메모장에 저장.  
-ex)/home/nas/A/B/C/p224.wav  
+ex)
+/home/nas/A/B/C/p224.wav  
 /home/nas/A/B/C/p225.wav  
-...
-본인 취향인데 나는 feature를 저장하려고 이렇게 했다.  
-이렇게 해도 되고 안해도 되고 안 할 사람은 dataset을 본인 나름대로 짜면 된다.
-```dataset/demand_dataset_test.py 참고 ```
 
 ### 2) audio data를 STFT 하여 저장한다.  
 48khz 데이터들을 16khz로 resampling해준다. 필자는 16khz로 사용했다.
