@@ -10,8 +10,8 @@
 ```/home/nas/noise/test.txt```
 
 ### 2) STFT the audio data and store it as a pickle. 
-1.48khz 데이터들을 16khz로 resampling해준다. 필자는 16khz로 사용했다.
-2.```sh make_data_feature.sh```
+1. 48khz 데이터들을 16khz로 resampling해준다. 필자는 16khz로 사용했다.
+2. ```sh make_data_feature.sh```
 ```--clean_train /home/nas/clean/train.txt --noise_train .......```
 
 
