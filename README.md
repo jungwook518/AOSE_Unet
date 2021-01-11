@@ -17,8 +17,8 @@
 
 
 ## 1. train 관련  
-```python train_DCUnet_jsdr_demand.py --train_data_root_folder /home/nas/train/save/ --val_data_root_folder /home/nas/test/save --gpu 0 --modelsave_path model/save/path --snr 0 --exp_day 0101 --batch_size 20 --frame_num 128 --learning_rate 0.0001 --fs 48```
-
+1. ```python train_DCUnet_jsdr_demand.py --train_data_root_folder /home/nas/train/save/ --val_data_root_folder /home/nas/test/save --gpu 0 --modelsave_path model/save/path --snr 0 --exp_day 0101 --batch_size 20 --frame_num 128 --learning_rate 0.0001 --fs 48```
+2. or ```sh train.sh```
 
 ## 2. model 관련  
 1. ```frame_num``` is time value of STFT.
