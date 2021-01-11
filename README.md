@@ -26,7 +26,7 @@
 3. if you don't like it, change model padding, stride, kernel etc.
 
 ## 3. test 관련  
-1. ```python test_DCUnet_jsdr_demand.py --fs 48 --test_model model/path.pth --test_data_root_folder /home/nas/test/audio --test_data_output_path /home/nas/test/output
+1. ```python test_DCUnet_jsdr_demand.py --fs 48 --test_model model/path.pth --test_data_root_folder /home/nas/test/audio --test_data_output_path /home/nas/test/output```
 2. or ```sh test.sh```
 3. ```test_data_root_folder``` is folder that has .wav audio files.
 4. The length of the output audio is limited. To solve this, go into```dataset/demand_dataset_test_librosa.py``` and add line 107-113 paragraphs appropriately to the length.
