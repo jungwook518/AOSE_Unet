@@ -4,10 +4,10 @@
 ### 1) download
 1. download and extract the file train / test dataset 28spk https://datashare.is.ed.ac.uk/handle/10283/2791  
 2. write address location of files in txt file
-```/home/nas/clean/train.txt
-/home/nas/noise/train.txt
-/home/nas/clean/test.txt
-/home/nas/noise/test.txt```
+```/home/nas/clean/train.txt```
+```/home/nas/noise/train.txt```
+```/home/nas/clean/test.txt```
+```/home/nas/noise/test.txt```
 
 ### 2) audio data를 STFT 하여 저장한다.  
 48khz 데이터들을 16khz로 resampling해준다. 필자는 16khz로 사용했다.
