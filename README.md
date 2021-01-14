@@ -34,4 +34,4 @@
 ## 4. data 추가 관련  
 1. demand noise dataset download https://zenodo.org/record/1227121#.X1Ytv3kzaUk 
 2. To do, clean data + demand noise dataset
-3. ```cd data_augment/data_aug_demand_dataset.py --clean_train_txt /home/nas/clean/train.txt --noise_txt /home/nas/demand/noise.txt --save_path /home/nas/save/path/ --snr 0 --fs 48```
+3. ```cd data_augment python data_aug_demand_dataset.py --clean_train_txt /home/nas/clean/train.txt --noise_txt /home/nas/demand/noise.txt --save_path /home/nas/save/path/ --snr 0 --fs 48```
